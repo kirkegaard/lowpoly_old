@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>canvas demo</title>
+
+    <style type="text/css" media="screen">
+        html, body {
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            overflow:hidden;
+            background-color: #fff;
+              -webkit-box-align: center;
+              -webkit-box-pack: center;
+              -webkit-transition: 0.25s opacity;
+            background: -webkit-radial-gradient(rgba(255, 255, 255, 0),
+                                                rgba(160, 160, 160, 0.2) 50%,
+                                                rgba(0, 0, 0, 0.4));
+            background:    -moz-radial-gradient(rgba(255, 255, 255, 0),
+                                                rgba(160, 160, 160, 0.2) 50%,
+                                                rgba(0, 0, 0, 0.4));
+            background:     -ms-radial-gradient(rgba(255, 255, 255, 0),
+                                                rgba(160, 160, 160, 0.2) 50%,
+                                                rgba(0, 0, 0, 0.4));
+            background:      -o-radial-gradient(rgba(255, 255, 255, 0),
+                                                rgba(160, 160, 160, 0.2) 50%,
+                                                rgba(0, 0, 0, 0.4));
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        window.requestAnimFrame = (function(){
+          return  window.requestAnimationFrame       ||
+                  window.webkitRequestAnimationFrame ||
+                  window.mozRequestAnimationFrame    ||
+                  window.oRequestAnimationFrame      ||
+                  window.msRequestAnimationFrame     ||
+                  function( callback ){
+                    window.setTimeout(callback, 1000 / 60);
+                  };
+        })();
+
+        var SCREEN_WIDTH  = window.innerWidth
+          , SCREEN_HEIGHT = window.innerHeight
+          , HALF_X        = SCREEN_WIDTH / 2
+          , HALF_Y        = SCREEN_HEIGHT / 2
+          , canvas        = document.getElementById('canvas')
+          , context       = canvas.getContext('2d')
+          , NOW           = new Date()
+          ;
+
+        var NUM    = 500
+          , RADIUS = HALF_X / 2
+          , IXRADIUS = 65
+          , IYRADIUS = 30
+          , BALLS  = []
+          , BMIN = 3
+          , BMAX = 20
+          , PALETTES = [
+            ['#411422', '#BE3D64', '#B77E8D', '#B39EA2', '#B0BFB7'],
+            ['#F1E6D4', '#BA3D49', '#791F33', '#9F9694', '#E3E1DC'],
+            ['#467F71', '#FFE87A', '#FFCA53', '#FF893B', '#E52738'],
+            ['#0F2D40', '#194759', '#296B73', '#3E8C84', '#D8F2F0'],
+            ['#CD4343', '#BEB9B7', '#CECBD0', '#DBD5D1', '#8FAAAD'],
+            ['#118888', '#3FC1A6', '#8EFFEC', '#FFFFFF', '#F10C5C'],
+            ['#FEA235', '#FFD24E', '#33AC93', '#309770', '#CC4A6C']
+          ]
+          , COLORS = []
+          ;
+
+        init();
+        animate();
+        // render();
+
+        function init() {
+            canvas.height = SCREEN_HEIGHT;
+            canvas.width  = SCREEN_WIDTH;
+
+            COLORS = PALETTES[rnd(0, PALETTES.length, true)];
+
+            for(var i = 0; i < NUM; i++) {
+                BALLS[i] = {
+                    x: Math.sin(i) * Math.PI * rnd(IXRADIUS, RADIUS) / 2 + HALF_X,
+                    y: Math.cos(i) * Math.PI * rnd(IYRADIUS, RADIUS) / 2 + HALF_Y,
+                    a: 0,
+                    r: rnd(BMIN, BMAX),
+                    c: COLORS[rnd(0, COLORS.length, true)]
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimFrame(animate);
+            render();
+        }
+
+        function render() {
+            var millis = new Date() - NOW;
+            context.clearRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+
+            for(x in BALLS) {
+                var b = BALLS[x];
+                var c = hexToRgb(b.c);
+
+                context.fillStyle = "rgba("+c.r+","+c.g+","+c.b+","+b.a+")";
+                context.beginPath();
+                context.arc(b.x, b.y, b.r, 0, Math.PI*2, true);
+                context.closePath();
+                context.fill();
+
+                // RESET BALL
+                if(b.r < 0.1) {
+                    b.x = Math.sin(millis) * Math.PI * rnd(IXRADIUS, RADIUS) / 2 + HALF_X;
+                    b.y = Math.cos(millis) * Math.PI * rnd(IYRADIUS, RADIUS) / 2 + HALF_Y;
+                    b.r = rnd(BMIN, BMAX);
+                    b.a = 0;
+                    b.c = COLORS[rnd(0, COLORS.length, true)];
+                }
+                b.a += 0.01;
+                b.r -= 0.05;
+            }
+        }
+
+        function rnd(min, max, floor) {
+            var num = Math.random() * (max - min) + min;
+            return (floor) ? Math.floor(num) : num;
+        }
+
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+    </script>
+</body>
+</html>
