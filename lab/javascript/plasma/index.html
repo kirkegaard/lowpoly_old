@@ -1,91 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css" media="screen">
+    body {
+        margin: 0;
+        overflow:hidden;
+        background-color: #000000;
+    }
+</style>
+<canvas id="canvas"></canvas>
+<script type="text/javascript" charset="utf-8">
+    (function() {
 
-    <title>canvas demo</title>
+        var SCREEN_WIDTH  = window.innerWidth,
+            SCREEN_HEIGHT = window.innerHeight,
+            canvas        = document.getElementById('canvas'),
+            context       = canvas.getContext('2d'),
+            res           = 48,
+            rad           = Math.PI / 180,
+            aa = ab = ac = ad = 0,
+            cr = cg = cb  = 128, // COLOR
+            a             = seed(6),
+            HALF_WIDTH    = Math.ceil(SCREEN_WIDTH / res),
+            HALF_HEIGHT   = Math.ceil(SCREEN_HEIGHT / res);
 
-    <style type="text/css" media="screen">
-        body {
-            margin: 0;
-            overflow:hidden;
-            background-color: #000000;
+        init();
+
+        function init() {
+            canvas.height = SCREEN_HEIGHT;
+            canvas.width  = SCREEN_WIDTH;
+
+            plasma();
         }
-    </style>
-</head>
-<body>
-    <canvas id="canvas"></canvas>
-    <script type="text/javascript" charset="utf-8">
-        (function() {
 
-            var SCREEN_WIDTH  = window.innerWidth,
-                SCREEN_HEIGHT = window.innerHeight,
-                canvas        = document.getElementById('canvas'),
-                context       = canvas.getContext('2d'),
-                res           = 48,
-                rad           = Math.PI / 180,
-                aa = ab = ac = ad = 0,
-                cr = cg = cb  = 128, // COLOR
-                a             = seed(6),
-                HALF_WIDTH    = Math.ceil(SCREEN_WIDTH / res),
-                HALF_HEIGHT   = Math.ceil(SCREEN_HEIGHT / res);
+        function plasma() {
 
-            init();
+            for(var x = 0; x < res; x++) {
 
-            function init() {
-                canvas.height = SCREEN_HEIGHT;
-                canvas.width  = SCREEN_WIDTH;
+                aa += 0.0005 * Math.cos(rad * x * a[0]);
+                ac += 0.0010 * Math.sin(rad * (res - x) * a[2]);
 
-                plasma();
-            }
+                for(var y = 0; y < res; y++) {
 
-            function plasma() {
+                    ab += 0.001 * Math.cos(rad * y * a[1]);
+                    ad += 0.001 * Math.sin(rad * (res - y) * a[3]);
 
-                for(var x = 0; x < res; x++) {
+                    var h = x * 8 * Math.sin(rad * (aa + ab) * a[4]),
+                        j = y * 8 * Math.cos(rad * (ac + ad) * a[5]),
+                        k = (x * a[0] + y * a[1]) * 32 * Math.sin(rad * ((res - x) * h + (y - res) * h) * a[2] / 720),
+                        l = (res * a[3] - x  * a[3] + (res * a[4] - y * a[4])) * 32 * Math.sin(rad * (x * h + y * j) * a[5] / 720);
 
-                    aa += 0.0005 * Math.cos(rad * x * a[0]);
-                    ac += 0.0010 * Math.sin(rad * (res - x) * a[2]);
-
-                    for(var y = 0; y < res; y++) {
-
-                        ab += 0.001 * Math.cos(rad * y * a[1]);
-                        ad += 0.001 * Math.sin(rad * (res - y) * a[3]);
-
-                        var h = x * 8 * Math.sin(rad * (aa + ab) * a[4]),
-                            j = y * 8 * Math.cos(rad * (ac + ad) * a[5]),
-                            k = (x * a[0] + y * a[1]) * 32 * Math.sin(rad * ((res - x) * h + (y - res) * h) * a[2] / 720),
-                            l = (res * a[3] - x  * a[3] + (res * a[4] - y * a[4])) * 32 * Math.sin(rad * (x * h + y * j) * a[5] / 720);
-
-                        h = 48 * Math.cos(rad * h) + 42 * Math.cos(rad * j);
+                    h = 48 * Math.cos(rad * h) + 42 * Math.cos(rad * j);
 
 
-                        cr = 128 + Math.ceil(42 * Math.cos(rad * k) + h);
-                        cg = 128 + Math.ceil(42 * Math.cos(rad * l) + h);
-                        cb = Math.ceil((cr + cg) / 2 - h * 2);
+                    cr = 128 + Math.ceil(42 * Math.cos(rad * k) + h);
+                    cg = 128 + Math.ceil(42 * Math.cos(rad * l) + h);
+                    cb = Math.ceil((cr + cg) / 2 - h * 2);
 
-                        context.fillStyle = 'rgb(' + cr + ',' + cg + ',' + cb + ')';
-                        context.fillRect(y * HALF_WIDTH, x * HALF_HEIGHT, HALF_WIDTH, HALF_HEIGHT);
-
-                    }
+                    context.fillStyle = 'rgb(' + cr + ',' + cg + ',' + cb + ')';
+                    context.fillRect(y * HALF_WIDTH, x * HALF_HEIGHT, HALF_WIDTH, HALF_HEIGHT);
 
                 }
 
-                setTimeout(plasma, 20);
-
             }
 
-            function seed(count) {
-                var res = [];
-                for(var i = 0; i < count; i++) {
-                    res[i] = Math.ceil(Math.random(0, 1) * 3 + 1);
-                }
-                return res;
+            setTimeout(plasma, 20);
+
+        }
+
+        function seed(count) {
+            var res = [];
+            for(var i = 0; i < count; i++) {
+                res[i] = Math.ceil(Math.random(0, 1) * 3 + 1);
             }
+            return res;
+        }
 
-        })();
+    })();
 
-    </script>
-</body>
-</html>
+</script>

@@ -30,7 +30,6 @@ var SITE = {
             error: function(xhr, textStatus, errorThrown) {
             }
         });
-
     }
 
 }

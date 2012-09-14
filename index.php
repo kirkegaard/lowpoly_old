@@ -10,7 +10,7 @@
         <title>Lowpoly.dk - Christian Kirkegaard</title>
 
         <meta name="description" content="Experiments by Christian Kirkegaard">
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
