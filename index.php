@@ -18,39 +18,36 @@
     </head>
     <body>
 
-        <div class="container">
-            <div id="frame">
-                <div class="vin"></div>
-            </div>
-            <div class="box">
-                <div class="inner">
-                    <div class="upper">
-                        <h1>lowpoly</h1>
-                        <p class="about"><b>Hi,</b> Im Christian</p>
-                        <div class="clearfix"></div>
-                        <p class="social">
-                            <a href="mailto:christian@lowpoly.dk">» mail</a><br>
-                            <a href="http://github.com/kirkegaard">» github</a><br>
-                            <a href="http://facebook.com/christian.kirkegaard">» facebook</a><br>
-                            <a href="http://twitter.com/ranza">» twitter</a><br>
-                            <span class="phone">» +45 23 84 69 60</span><br>
-                        </p>
-                    </div>
-                    <h3>Experiments:</h3>
-                    <ul>
-                        <li>
-                            <a href="lab/javascript/balls/index.html">&nbsp;</a>
-                        </li>
-                        <li>
-                            <a href="lab/javascript/wires/index.html">&nbsp;</a>
-                        </li>
-                        <li class="last">
-                            <a href="lab/javascript/plasma/index.html">&nbsp;</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    <div class="box">
+        <div class="inner">
+            <h1>lowpoly</h1>
+            <p class="about"><b>Hi, Im Christian.</b><br>Im a tea drinking longboarder and motion graphic designer / hacker.</p>
+            <ul class="social">
+                <li><span class="phone">» +45 23 84 69 60</span></li>
+                <li><a href="mailto:christian@lowpoly.dk">» mail</a></li>
+                <li><a href="http://github.com/kirkegaard">» github</a></li>
+                <li><a href="http://facebook.com/christian.kirkegaard">» facebook</a></li>
+                <li><a href="http://twitter.com/ranza">» twitter</a></li>
+            </ul>
+            <h3>Experiments:</h3>
+            <ul class="lab">
+                <li>
+                    <a target="frame" href="lab/javascript/balls/index.html">&nbsp;</a>
+                </li>
+                <li>
+                    <a target="frame" href="lab/javascript/glow/index.html">&nbsp;</a>
+                </li>
+                <li>
+                    <a target="frame" href="lab/javascript/wires/index.html">&nbsp;</a>
+                </li>
+                <li class="last">
+                    <a target="frame" href="lab/javascript/plasma/index.html">&nbsp;</a>
+                </li>
+            </ul>
         </div>
+    </div>
+
+    <iframe name="frame" src="lab/javascript/balls/index.html" height="100%" width="100%" frameborder="0"></iframe>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.1.min.js"><\/script>')</script>
