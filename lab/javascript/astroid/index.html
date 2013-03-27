@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css" media="screen">
+            body {
+                margin: 0;
+                overflow:hidden;
+                background-color: #fff;
+            }
+        </style>
+    </head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    (function() {
+
+    window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame    ||
+              window.oRequestAnimationFrame      ||
+              window.msRequestAnimationFrame     ||
+              function( callback ){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
+    var WIDTH  = window.innerWidth
+      , HEIGHT = window.innerHeight
+      , HALF_WIDTH    = WIDTH / 2
+      , HALF_HEIGHT   = HEIGHT / 2
+      , canvas        = document.getElementById('canvas')
+      , context       = canvas.getContext('2d')
+      , elms          = new Array()
+      , elms_count    = 10
+      , rint          = 30
+      , color         = 'rgba(150,150,150,.5)'
+      ;
+
+    init();
+    requestAnimFrame(animate);
+
+    function animate() {
+        draw();
+        setTimeout(function() {
+            requestAnimFrame(animate);
+        }, 1000 / rint);
+    }
+
+    function init() {
+        canvas.height = HEIGHT;
+        canvas.width  = WIDTH;
+
+        for(var i = 0; i < elms_count; i++) {
+            elms[i] = new Elm();
+            elms[i].draw();
+            console.log(elms[i]);
+        }
+    }
+
+    function draw() {
+        context.clearRect(0,0,WIDTH,HEIGHT);
+
+        for(var i = 0; i < elms_count; i++) {
+            elms[i].move();
+            elms[i].draw();
+        }
+    }
+
+    function Elm() {
+        this.x = Math.random() * WIDTH;
+        this.y = Math.random() * HEIGHT;
+        this.sides = Math.ceil(Math.random() * 5 + 2);
+        this.radius = Math.random() * 100;
+
+        this.draw = function() {
+            context.strokeStyle = context.fillStyle = color;
+            context.beginPath();
+            context.moveTo(this.x, this.y);
+
+            for(var i = 0; i < this.sides; i++) {
+                var bx = by = 0;
+                bx = this.x + Math.cos(i / this.sides * Math.PI * 2) * this.radius / 2;
+                by = this.y + Math.sin(i / this.sides * Math.PI * 2) * this.radius / 2;
+                context.lineTo(bx, by);
+            }
+
+            context.lineTo(this.x, this.y);
+
+            if(this.radius < 50) {
+                context.fill();
+            } else {
+                context.stroke();
+            }
+        }
+
+        this.move = function() {
+            this.x += 0.5;
+            this.y += 0.5;
+        }
+        this.reset = function() {}
+
+        this.getX = function() { return this.x; }
+        this.getY = function() { return this.y; }
+    }
+
+    })();
+    </script>
+</body>
+</html>
