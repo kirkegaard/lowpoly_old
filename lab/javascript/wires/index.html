@@ -26,98 +26,146 @@
 </head>
 
 <body>
-    <canvas id="canvas"></canvas>
-    <script>
-        (function() {
+<canvas id="canvas"></canvas>
+<script>
+    (function() {
 
-            var SCREEN_WIDTH  = window.innerWidth
-              , SCREEN_HEIGHT = window.innerHeight
-              , HALF_Y        = SCREEN_HEIGHT / 2
-              , HALF_X        = SCREEN_WIDTH / 2
-              , canvas        = document.getElementById('canvas')
-              , context       = canvas.getContext('2d')
-              , NOW           = new Date()
-              , PPL           = 12
-              , LINES         = 6
-              , POINTS        = []
-              , POINT_WIDTH   = SCREEN_WIDTH / (PPL + 1)
-              , MEDIAN        = HALF_Y / 2
-              ;
+    window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame    ||
+              window.oRequestAnimationFrame      ||
+              window.msRequestAnimationFrame     ||
+              function( callback ){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
 
-            init();
-            render();
+    var SCREEN_WIDTH  = window.innerWidth
+      , SCREEN_HEIGHT = window.innerHeight
+      , HALF_Y        = SCREEN_HEIGHT / 2
+      , HALF_X        = SCREEN_WIDTH / 2
+      , canvas        = document.getElementById('canvas')
+      , context       = canvas.getContext('2d')
+      , NOW           = new Date()
+      , PPL           = 12
+      , LINES         = 4
+      , POINTS        = []
+      , POINT_WIDTH   = SCREEN_WIDTH / (PPL + 1)
+      , MEDIAN        = HALF_Y / 2
+      ;
 
-            function init() {
-                SCREEN_WIDTH  = window.innerWidth;
-                SCREEN_HEIGHT = window.innerHeight;
-                canvas.height = SCREEN_HEIGHT;
-                canvas.width  = SCREEN_WIDTH;
-                HALF_Y        = SCREEN_HEIGHT / 2;
-                HALF_X        = SCREEN_WIDTH / 2;
-                POINT_WIDTH   = SCREEN_WIDTH / (PPL + 1);
-                MEDIAN        = HALF_Y / 2;
+    init();
 
-                for(var l = 0; l < LINES; l++) {
-                    POINTS[l] = [];
-                    for(var p = 0; p < PPL; p++) {
-                        POINTS[l][p] = Math.floor(rnd(
-                            HALF_Y - MEDIAN,
-                            HALF_Y + MEDIAN
-                        ));
-                    }
-                }
+    requestAnimFrame(animate);
+    function animate() {
+        draw();
+        setTimeout(function() {
+            requestAnimFrame(animate);
+        }, 1000 / 30);
+    }
+
+    function init() {
+        canvas.height = SCREEN_HEIGHT;
+        canvas.width  = SCREEN_WIDTH;
+
+        for(var l = 0; l < LINES; l++) {
+            POINTS[l] = new Line();
+            POINTS[l].init();
+            POINTS[l].draw();
+        }
+        console.log(POINTS);
+    }
+
+    function draw() {
+        context.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        for(var l = 0; l < LINES; l++) {
+            POINTS[l].draw();
+            POINTS[l].move();
+        }
+    }
+
+
+    function Line() {
+        this.curve = rnd(HALF_Y - (MEDIAN/4), HALF_Y + (MEDIAN/4));
+        this.orbs = [];
+        this.points = [];
+        this.speeds = [];
+        this.directions = [];
+
+        this.init = function() {
+            for(var i = 0; i < PPL; i++) {
+                this.points.push(Math.floor(rnd(HALF_Y - MEDIAN, HALF_Y + MEDIAN)));
+                this.orbs.push(rnd(2, 10));
+                this.speeds.push(rnd(0.5, 2));
+                this.directions.push((Math.floor(rnd(0, 1.9)) == 0) ? -1 : 1);
+            }
+        }
+
+        this.draw = function() {
+            context.lineWidth = 1;
+            context.strokeStyle = 'rgba(0, 0, 0, .2)';
+            context.beginPath();
+            context.moveTo(0, this.curve);
+
+            for(var i = 0; i < this.points.length; i++) {
+                var py = this.points[i];
+                var px = POINT_WIDTH * (i + 1);
+
+                var cy = (py + this.points[i + 1]) / 2;
+                var cx = (px + (POINT_WIDTH * (i + 2))) / 2;
+
+                context.quadraticCurveTo(px, py, cx, cy);
             }
 
-            function render() {
-                var millis = new Date() - NOW;
-                context.clearRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+            context.quadraticCurveTo(
+                px, py,
+                SCREEN_WIDTH,
+                this.curve
+            );
+            context.stroke();
 
-                for(var x = 0; x < POINTS.length; x++) {
-                    context.lineWidth = 1;
-                    context.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-                    context.beginPath();
-                    context.moveTo(0, rnd(HALF_Y - (MEDIAN/4), HALF_Y + (MEDIAN/4)));
+            for(var i = 0; i < this.points.length; i++) {
+                var py = this.points[i];
+                var px = POINT_WIDTH * (i + 1);
 
-                    for(var y = 0; y < POINTS[x].length; y++) {
-                        var py = POINTS[x][y];
-                        var px = POINT_WIDTH * (y + 1);
+                var cy = (py + this.points[i + 1]) / 2;
+                var cx = (px + (POINT_WIDTH * (i + 2))) / 2;
 
-                        var cy = (py + POINTS[x][y + 1]) / 2;
-                        var cx = (px + (POINT_WIDTH * (y + 2))) / 2;
+                context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                context.beginPath();
+                context.arc(px, py, this.orbs[i], 0, Math.PI*2, true);
+                context.closePath();
+                context.fill();
+            }
+        }
 
-                        context.quadraticCurveTo(px, py, cx, cy);
-                    }
+        this.move = function() {
+            for(var i = 0; i < this.points.length; i++) {
 
-                    context.quadraticCurveTo(
-                        px, py,
-                        SCREEN_WIDTH,
-                        rnd(HALF_Y - (MEDIAN/4), HALF_Y + (MEDIAN/4))
-                    );
-                    context.stroke();
+                if(this.points[i] > HALF_Y + MEDIAN) {
+                    this.directions[i] = -1;
+                } else if (this.points[i] < HALF_Y - MEDIAN) {
+                    this.directions[i] = 1;
                 }
 
-                for(var o = 0; o < POINTS.length; o++) {
-                    for(var y = 0; y < POINTS[o].length; y++) {
-                        var py = POINTS[o][y];
-                        var px = POINT_WIDTH * (y + 1);
+                this.points[i] += this.speeds[i] * this.directions[i];
 
-                        var cy = (py + POINTS[o][y + 1]) / 2;
-                        var cx = (px + (POINT_WIDTH * (y + 2))) / 2;
-
-                        context.fillStyle = 'rgba(0, 0, 0, 0.3)';
-                        context.beginPath();
-                        context.arc(cx, cy, rnd(2, 10), 0, Math.PI*2, true);
-                        context.closePath();
-                        context.fill();
-                    }
-                }
+                // if(i%2) {
+                //     this.points[i] += this.speed * d;
+                // } else {
+                //     this.points[i] -= this.speed * d;
+                // }
             }
+        }
+    }
 
-            function rnd(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+    function rnd(min, max) {
+        return Math.random() * (max - min) + min;
+    }
 
-        })();
-    </script>
+    })();
+</script>
 </body>
 </html>
