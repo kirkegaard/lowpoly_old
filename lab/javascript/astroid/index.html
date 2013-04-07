@@ -66,20 +66,24 @@
         }
     }
 
-    function getRandom(min, max) {
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getRandomFloat(min, max) {
         return Math.random() * (max - min) + min;
     }
 
     function Elm() {
-        this.x = getRandom(0, WIDTH);
-        this.y = getRandom(0, HEIGHT);
+        this.x = getRandomFloat(0, WIDTH);
+        this.y = getRandomFloat(0, HEIGHT);
         this.direction = {
-            x: Math.floor(getRandom(-1, 1.9))
-          , y: Math.floor(getRandom(-1, 1.9))
+            x: (getRandomInt(0, 1) == 0) ? -1 : 1
+          , y: (getRandomInt(0, 1) == 0) ? -1 : 1
         };
-        this.sides = Math.floor(getRandom(3, 7));
-        this.radius = getRandom(25, 150);
-        this.speed = getRandom(0.5, 2);
+        this.sides = getRandomInt(3, 7);
+        this.radius = getRandomFloat(25, 150);
+        this.speed = getRandomFloat(0.5, 2);
 
         this.draw = function() {
             context.strokeStyle = context.fillStyle = color;
