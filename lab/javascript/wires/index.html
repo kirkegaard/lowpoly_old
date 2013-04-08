@@ -48,7 +48,7 @@
       , canvas        = document.getElementById('canvas')
       , context       = canvas.getContext('2d')
       , NOW           = new Date()
-      , PPL           = 8
+      , PPL           = 12
       , LINES         = 4
       , POINTS        = []
       , POINT_WIDTH   = SCREEN_WIDTH / (PPL + 1)
@@ -93,6 +93,7 @@
         this.speeds = [];
         this.directions = [];
         this.d = [];
+        this.opacity = []
 
         this.init = function() {
             for(var i = 0; i < PPL; i++) {
@@ -101,6 +102,7 @@
                 this.speeds.push(rnd(0.3, 1.4));
                 this.directions.push((Math.floor(rnd(0, 1.9)) == 0) ? -1 : 1);
                 this.d.push(0);
+                this.opacity.push(0.3);
             }
         }
 
@@ -134,7 +136,7 @@
                 var cy = (py + this.points[i + 1]) / 2;
                 var cx = (px + (POINT_WIDTH * (i + 2))) / 2;
 
-                context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                context.fillStyle = 'rgba(0, 0, 0, '+this.opacity[i]+')';
                 context.beginPath();
                 context.arc(px, py, this.orbs[i], 0, Math.PI*2, true);
                 context.closePath();
@@ -145,11 +147,13 @@
         this.move = function() {
             for(var i = 0; i < this.points.length; i++) {
 
+                var x = Math.sin(this.d[i] * Math.PI / 360) * MEDIAN;
                 var p = Math.sin(this.d[i] * Math.PI / 180) * MEDIAN;
                 this.d[i] += this.speeds[i];
 
                 this.points[i] = p + HALF_Y;
-                this.orbs[i] = (1 + (Math.abs(p / MEDIAN) * -1)) * 8 + 4;
+                this.orbs[i] = (1 + (Math.abs(x / MEDIAN) * -1)) * 8 + 4;
+                this.opacity[i] = (1 + (Math.abs(x / MEDIAN) * -1)) * 0.5 + 0.1;
             }
         }
     }
