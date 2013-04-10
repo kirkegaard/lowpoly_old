@@ -35,6 +35,9 @@
                     <a target="frame" href="lab/javascript/balls/index.html">&nbsp;</a>
                 </li>
                 <li>
+                    <a target="frame" href="lab/javascript/astroid/index.html">&nbsp;</a>
+                </li>
+                <li>
                     <a target="frame" href="lab/javascript/glow/index.html">&nbsp;</a>
                 </li>
                 <li>
