@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style type="text/css" media="screen">
+        body {
+            margin: 0;
+            overflow:hidden;
+            background-color: #fff;
+        }
+        </style>
+    </head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+(function() {
+
+    window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame    ||
+              window.oRequestAnimationFrame      ||
+              window.msRequestAnimationFrame     ||
+              function( callback ){
+                window.setTimeout(callback, 1000 / FPS);
+              };
+    })();
+
+    var WIDTH    = window.innerWidth
+      , HEIGHT   = window.innerHeight
+      , FPS      = 30
+      , CANVAS   = document.getElementById('canvas')
+      , CTX      = canvas.getContext('2d')
+      , NOW      = new Date()
+      , LAYERS   = []
+    ;
+
+    init();
+    animate();
+
+    function init () {
+        CANVAS.height = HEIGHT;
+        CANVAS.width  = WIDTH;
+
+        LAYERS = load('test4.svg');
+    }
+
+    function load (file) {
+        var xmlReq = new XMLHttpRequest();
+
+        try {
+            xmlReq.open("GET", file, false);
+            xmlReq.send(null);
+        } catch (e) {
+            alert('Unable to load the requested file.');
+        }
+
+        JSON = xmlToJson(xmlReq.responseXML);
+        LAYERS = [];
+
+        // SINGLE LAYER
+        if(JSON.svg[1].polygon) {
+            var layers = [];
+            var attr = JSON.svg[1].polygon['@attributes'];
+
+            var polygon = new Polygon({
+                points: attr.points
+              , fill: attr.fill
+              , stroke: attr.stroke
+              , opacity: attr.opacity | 0
+              , strokeMiterlimit: attr['stroke-miterlimit']
+            });
+
+            layers.push([polygon]);
+            return layers;
+        }
+
+        // MULTIPLE LAYERS
+        if(JSON.svg[1].g) {
+            var layers = [];
+            var layer = JSON.svg[1].g;
+
+            // For each layer
+            for(var i = 0; i < layer.length; i++) {
+                // For each polygon in layer
+                var polygons = [];
+                if(layer[i].polygon) {
+                    for(var ii = 0; ii < layer[i].polygon.length; ii++) {
+                        var attr = layer[i].polygon[ii]['@attributes'];
+                        var polygon = new Polygon({
+                            points: attr.points
+                          , fill: attr.fill
+                          , stroke: attr.stroke
+                          , opacity: attr.opacity | 0
+                          , strokeMiterlimit: attr['stroke-miterlimit']
+                        });
+                        polygons.push(polygon);
+                    }
+                }
+                layers.push(polygons);
+            }
+
+            return layers;
+        }
+    }
+
+    function draw () {
+        for (var i = 0; i < LAYERS.length; i++) {
+            var POLYGONS = LAYERS[i];
+            for(var ii = 0; ii < POLYGONS.length; ii++) {
+                var polygon = POLYGONS[ii];
+                polygon.draw();
+            }
+        };
+    }
+
+    function render () {
+        // var M = new Date() - NOW;
+        CTX.clearRect(0, 0, WIDTH, HEIGHT);
+        draw();
+    }
+
+    function animate () {
+        requestAnimationFrame(animate);
+        render();
+    }
+
+    function Polygon (options) {
+        this.x = 0;
+        this.y = 0;
+        this.points = [];
+        this.fill = 0x000000;
+        this.stroke = 'rgba(0,0,0,0.5)';
+        this.opacity = 1;
+        this.strokeMiterlimit = 10;
+        this.lineWidth = 1;
+
+
+        // CONSTRUCTOR
+        (function(options, polygon) {
+            for(i in options) {
+                polygon[i] = options[i];
+            }
+            polygon.points = polygon.points.replace(/\s+/g, ' ').trim().split(' ');
+            for(var i = 0; i < polygon.points.length; i++) {
+                var xy = polygon.points[i].split(',');
+                polygon.points[i] = {x:xy[0],y:xy[1]};
+            }
+        })(options, this);
+
+
+        this.draw = function () {
+            CTX.lineWidth = this.lineWidth;
+            CTX.beginPath();
+
+            CTX.moveTo(
+                this.x + this.points[this.points.length - 1].x,
+                this.y + this.points[this.points.length - 1].y
+            );
+
+            for(var i = 0; i < this.points.length; i++) {
+                CTX.lineTo(this.x + this.points[i].x, this.y + this.points[i].y);
+            }
+
+            if(this.stroke) {
+                CTX.strokeStyle = this.stroke;
+                CTX.stroke();
+            }
+            if(this.fill) {
+                CTX.fillStyle = this.fill;
+                CTX.fill();
+            }
+        }
+
+
+        this.move = function () {}
+    }
+
+
+    // FROM http://davidwalsh.name/convert-xml-json
+    // Changes XML to JSON
+    function xmlToJson(xml) {
+
+        // Create the return object
+        var obj = {};
+
+        if (xml.nodeType == 1) { // element
+            // do attributes
+            if (xml.attributes.length > 0) {
+            obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        } else if (xml.nodeType == 3) { // text
+            obj = xml.nodeValue;
+        }
+
+        // do children
+        if (xml.hasChildNodes()) {
+            for(var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if (typeof(obj[nodeName]) == "undefined") {
+                    obj[nodeName] = xmlToJson(item);
+                } else {
+                    if (typeof(obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(xmlToJson(item));
+                }
+            }
+        }
+        return obj;
+    };
+
+})();
+</script>
+
+</body>
+</html>
