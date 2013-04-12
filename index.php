@@ -44,6 +44,9 @@
                 <li>
                     <a target="frame" href="lab/javascript/wires/index.html">&nbsp;</a>
                 </li>
+                <li>
+                    <a target="frame" href="lab/javascript/polygon/index.html">&nbsp;</a>
+                </li>
                 <li class="last">
                     <a target="frame" href="lab/javascript/plasma/index.html">&nbsp;</a>
                 </li>
