@@ -25,6 +25,7 @@
             <ul class="social">
                 <li><span class="phone">» +45 23 84 69 60</span></li>
                 <li><a href="mailto:christian@lowpoly.dk">» mail</a></li>
+                <li><a href="http://www.behance.net/christiankirkegaard">» behance</a></li>
                 <li><a href="http://github.com/kirkegaard">» github</a></li>
                 <li><a href="http://facebook.com/christian.kirkegaard">» facebook</a></li>
                 <li><a href="http://twitter.com/ranza">» twitter</a></li>
