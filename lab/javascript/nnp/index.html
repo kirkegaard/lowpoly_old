@@ -20,20 +20,28 @@ window.requestAnimFrame = (function(){
           window.oRequestAnimationFrame      ||
           window.msRequestAnimationFrame     ||
           function( callback ){
-            window.setTimeout(callback, 1000 / 30);
+            window.setTimeout(callback, 1000 / 60);
           };
 })();
 
 (function() {
 
-    var WIDTH      = window.innerWidth
-      , HEIGHT     = window.innerHeight
-      , CANVAS     = document.getElementById('canvas')
-      , CTX        = CANVAS.getContext('2d')
-      , POINTS     = [{x:100, y:200}, {x:500, y:600}, {x: 200, y:450}, {x:140,y:700}, {x:750,y:240}, {x:500,y:470}, {x:450,y:150}]
-      , HIGHLIGHT  = []
-      , CURSOR     = {x:0,y:0}
+    var WIDTH       = window.innerWidth
+      , HEIGHT      = window.innerHeight
+      , CANVAS      = document.getElementById('canvas')
+      , CTX         = CANVAS.getContext('2d')
+      , POINTS      = [{x:100, y:200}, {x:500, y:600}, {x: 200, y:450}, {x:140,y:700}, {x:750,y:240}, {x:500,y:470}, {x:450,y:150}]
+      , HIGHLIGHT   = []
+      , CURSOR      = {x:0,y:0}
+      , CLICKED     = {x:0,y:0}
+      , SELECTED    = false
       , isMouseDown = false
+      , COLORS = {
+            mouseOver: '#f596f6'
+          , nearestStroke: '#a6d6ef'
+          , dotFill: '#a6d6ef'
+          , clickedFill: '#e0dfd0'
+        }
       ;
 
     init();
@@ -59,21 +67,42 @@ window.requestAnimFrame = (function(){
     }
 
     function onMouseMove(event) {
+        // reset selected to be sure we have false if not within point
+        SELECTED = false;
         CURSOR.x = event.clientX;
         CURSOR.y = event.clientY;
+
+        // Lets see if we are mousing over a point
+        for(var i = 0; i < POINTS.length; i++) {
+            var point = POINTS[i];
+            if(CURSOR.x + 20 >= point.x && CURSOR.x - 20 <= point.x &&
+               CURSOR.y + 20 >= point.y && CURSOR.y - 20 <= point.y
+              ) {
+                SELECTED = i;
+                if(isMouseDown) {
+                    POINTS[i].x = CLICKED.x = CURSOR.x;
+                    POINTS[i].y = CLICKED.y = CURSOR.y;
+                }
+            }
+        }
     }
 
     function onMouseDown(event) {
         event.preventDefault();
         isMouseDown = true;
 
-        var nnp = find(event.clientX, event.clientY);
-        HIGHLIGHT = nnp.slice(0,3);
     }
 
     function onMouseUp(event) {
         event.preventDefault();
         isMouseDown = false;
+
+        CLICKED.x = CURSOR.x;
+        CLICKED.y = CURSOR.y;
+
+        // display nnp on mouse up
+        var nnp = find(event.clientX, event.clientY);
+        HIGHLIGHT = nnp.slice(0,3);
     }
 
     function find(x,y) {
@@ -101,9 +130,13 @@ window.requestAnimFrame = (function(){
     }
 
     function update() {
-        CTX.strokeStyle = 'rgba(0, 0, 0, .5)';
-        CTX.fillStyle = 'rgba(0, 0, 0, .5)';
+        // Draw where we clicked
+        CTX.beginPath();
+        CTX.arc(CLICKED.x, CLICKED.y, 5, 0, Math.PI*2, true);
+        CTX.fillStyle = COLORS.clickedFill;
+        CTX.fill();
 
+        // Draw lines between nearest points
         if(HIGHLIGHT.length > 0) {
             CTX.beginPath();
             CTX.moveTo(POINTS[HIGHLIGHT[0]].x, POINTS[HIGHLIGHT[0]].y);
@@ -112,31 +145,39 @@ window.requestAnimFrame = (function(){
                 CTX.lineTo(point.x,point.y);
             }
             CTX.closePath();
+
+            CTX.strokeStyle = COLORS.nearestStroke;
             CTX.stroke();
         }
 
+        // Draw the points
         for(var i = 0; i < POINTS.length; i++) {
             var point = POINTS[i];
 
+            // If the point is one of the highlighted, draw a circle around it
             if(_.contains(HIGHLIGHT, i)) {
                 CTX.beginPath();
                 CTX.arc(point.x, point.y, 12, 0, Math.PI*2, true);
+
+                CTX.strokeStyle = COLORS.nearestStroke;
                 CTX.stroke();
             }
 
+            // Draw the dots
             CTX.beginPath();
-            CTX.arc(point.x, point.y, 2, 0, Math.PI*2, true);
+            CTX.arc(point.x, point.y, 3, 0, Math.PI*2, true);
             CTX.closePath();
+
+            CTX.fillStyle = COLORS.dotFill;
             CTX.fill();
 
-            if(CURSOR.x + 20 >= point.x && CURSOR.x - 20 <= point.x &&
-               CURSOR.y + 20 >= point.y && CURSOR.y - 20 <= point.y
-              ) {
-                console.log('bump');
+            // If the mouse is within the dot, draw a circle around it
+            if(i === SELECTED) {
                 CTX.beginPath();
-                CTX.arc(point.x, point.y, 20, 0, Math.PI*2, true);
-                CTX.fill();
-                // CTX.stroke();
+                CTX.arc(point.x, point.y, 16, 0, Math.PI*2, true);
+
+                CTX.strokeStyle = COLORS.mouseOver;
+                CTX.stroke();
             }
 
         }
