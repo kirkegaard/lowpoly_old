@@ -102,6 +102,10 @@ body {
     font-size: 11px;
 }
 
+a {
+    color: #77c6f4;
+}
+
 .box {
     position: fixed;
     top: 10%;
@@ -138,27 +142,7 @@ body {
         margin: 0px;
         padding: 0px;
     }
-    .lab li {
-        float:left;
-        margin-right: 10px;
-        margin-bottom: 10px;
-    }
-    .lab li.last {
-        margin-right: 0px;
-    }
-    .lab li a {
-        display:block;
-        width: 25px;
-        height: 25px;
-        text-decoration:none;
-        background-color: #fff;
-    }
-    .lab li a:hover {
-        background-color: #ccc;
-    }
-    .social a {
-        color: #77c6f4;
-    }
+    .lab li,
     .social li {
         padding-left: 5px;
     }
