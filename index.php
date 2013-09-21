@@ -28,6 +28,7 @@
                 <li><a href="http://www.behance.net/christiankirkegaard">» behance</a></li>
                 <li><a href="http://github.com/kirkegaard">» github</a></li>
                 <li><a href="http://facebook.com/christian.kirkegaard">» facebook</a></li>
+                <li><a href="http://instagram.com/christiank">» instagram</a></li>
                 <li><a href="http://twitter.com/ranza">» twitter</a></li>
             </ul>
             <h3>Experiments:</h3>
