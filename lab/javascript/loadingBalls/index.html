@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css" media="screen">
+            body {
+                margin: 0;
+                overflow:hidden;
+                background-color: #fff;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+      (function() {
+        var lastTime = 0;
+        var vendors = ['ms', 'moz', 'webkit', 'o'];
+        for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+            window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                       || window[vendors[x]+'CancelRequestAnimationFrame'];
+        }
+
+        if (!window.requestAnimationFrame)
+            window.requestAnimationFrame = function(callback, element) {
+                var currTime = new Date().getTime();
+                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+                  timeToCall);
+                lastTime = currTime + timeToCall;
+                return id;
+            };
+
+        if (!window.cancelAnimationFrame)
+            window.cancelAnimationFrame = function(id) {
+                clearTimeout(id);
+            };
+
+        var SCREEN_WIDTH  = window.innerWidth
+          , SCREEN_HEIGHT = window.innerHeight
+          , HALF_X        = SCREEN_WIDTH / 2
+          , HALF_Y        = SCREEN_HEIGHT / 2
+          , canvas        = document.getElementById('canvas')
+          , context       = canvas.getContext('2d')
+          , NOW           = new Date()
+          , STEP          = 0
+          ;
+
+        var NUM    = 20
+          , SIZE   = 20
+          , BALLS  = []
+          , COLOR  = '#000000'
+          ;
+
+        function init() {
+          canvas.height = SCREEN_HEIGHT;
+          canvas.width  = SCREEN_WIDTH;
+
+          for (var i = 0; i < NUM; i++) {
+            var y = (SCREEN_HEIGHT / 2);
+            var x = (SCREEN_WIDTH / (NUM + 1)) * (i + 1);
+            BALLS.push(new Ball(x, y, SIZE));
+          };
+        }
+
+        function Ball (x,y,r) {
+          function draw() {
+            context.fillStyle = COLOR;
+            context.beginPath();
+            context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+            context.fill();
+          }
+          function setY(y) {
+            this.y = y;
+          }
+          return {
+            x:x,
+            y:y,
+            r:r,
+            draw: draw,
+            setY: setY
+          }
+        }
+
+        function loop () {
+          requestAnimationFrame(loop);
+          context.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+          for (var i = 0; i < NUM; i++) {
+            BALLS[i].setY(HALF_Y + HALF_Y/2 * (Math.sin((STEP * (i/1500 + 0.02)) % 2 * Math.PI)));
+            BALLS[i].draw();
+          }
+          STEP++;
+        }
+
+        init();
+        requestAnimationFrame(loop);
+
+      })();
+    </script>
+</body>
+</html>
