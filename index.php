@@ -36,7 +36,7 @@
                     <a target="frame" href="lab/javascript/balls/index.html">&nbsp;</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/astroid/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/loadingballs/index.html">&nbsp;</a>
                 </li>
                 <li>
                     <a target="frame" href="lab/javascript/glow/index.html">&nbsp;</a>
@@ -46,6 +46,9 @@
                 </li>
                 <li>
                     <a target="frame" href="lab/javascript/polygon/index.html">&nbsp;</a>
+                </li>
+                <li>
+                    <a target="frame" href="lab/javascript/astroid/index.html">&nbsp;</a>
                 </li>
                 <li class="last">
                     <a target="frame" href="lab/javascript/plasma/index.html">&nbsp;</a>
