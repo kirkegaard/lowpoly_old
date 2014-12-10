@@ -21,37 +21,41 @@
     <div class="box">
         <div class="inner">
             <h1>lowpoly</h1>
-            <p class="about"><b>Hi, Im Christian.</b><br>Im a tea drinking longboarder and motion graphic designer / hacker.</p>
+            <p class="about"><b>Hi, Im Christian.</b><br>Im a tea drinking longboarder and motion graphic designer / hacker. I currently work at <a href="http://m2film.dk">M2Film</a>.</p>
             <ul class="social">
                 <li><span class="phone">» +45 23 84 69 60</span></li>
                 <li><a href="mailto:christian@lowpoly.dk">» mail</a></li>
                 <li><a href="http://www.behance.net/christiankirkegaard">» behance</a></li>
                 <li><a href="http://github.com/kirkegaard">» github</a></li>
                 <li><a href="http://facebook.com/christian.kirkegaard">» facebook</a></li>
+                <li><a href="http://instagram.com/christiank">» instagram</a></li>
                 <li><a href="http://twitter.com/ranza">» twitter</a></li>
             </ul>
             <h3>Experiments:</h3>
             <ul class="lab">
                 <li>
-                    <a target="frame" href="lab/javascript/balls/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/balls/index.html">» Balls within radius</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/loadingballs/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/loadingballs/index.html">Loading balls</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/glow/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/particles/index.html">» Simple particle system</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/wires/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/glow/index.html">» Glowing orbs</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/polygon/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/wires/index.html">» Rotating wires</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/astroid/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/polygon/index.html">» SVG Parser</a>
+                </li>
+                <li>
+                    <a target="frame" href="lab/javascript/astroid/index.html">» Asteroids</a>
                 </li>
                 <li class="last">
-                    <a target="frame" href="lab/javascript/plasma/index.html">&nbsp;</a>
+                    <a target="frame" href="lab/javascript/plasma/index.html">» Oldscool plasma effect</a>
                 </li>
             </ul>
         </div>
