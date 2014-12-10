@@ -21,7 +21,7 @@
     <div class="box">
         <div class="inner">
             <h1>lowpoly</h1>
-            <p class="about"><b>Hi, Im Christian.</b><br>Im a tea drinking longboarder and motion graphic designer / hacker. I currently work at <a href="http://m2film.dk">M2Film</a>.</p>
+            <p class="about"><b>Hi, Im Christian.</b><br>Im a tea drinking longboarder and visual art director / hacker. I currently work at <a href="http://duckling.dk">Duckling</a>.</p>
             <ul class="social">
                 <li><span class="phone">» +45 23 84 69 60</span></li>
                 <li><a href="mailto:christian@lowpoly.dk">» mail</a></li>
@@ -31,13 +31,13 @@
                 <li><a href="http://instagram.com/christiank">» instagram</a></li>
                 <li><a href="http://twitter.com/ranza">» twitter</a></li>
             </ul>
-            <h3>Experiments:</h3>
+            <h3>This is a set of canvas experiments.</h3>
             <ul class="lab">
                 <li>
                     <a target="frame" href="lab/javascript/balls/index.html">» Balls within radius</a>
                 </li>
                 <li>
-                    <a target="frame" href="lab/javascript/loadingballs/index.html">Loading balls</a>
+                    <a target="frame" href="lab/javascript/loadingBalls/index.html">» Loading balls</a>
                 </li>
                 <li>
                     <a target="frame" href="lab/javascript/particles/index.html">» Simple particle system</a>
