@@ -40,6 +40,9 @@
                     <a target="frame" href="lab/javascript/loadingBalls/index.html">» Loading balls</a>
                 </li>
                 <li>
+                    <a target="frame" href="lab/javascript/nnp/index.html">» Loading balls</a>
+                </li>
+                <li>
                     <a target="frame" href="lab/javascript/particles/index.html">» Simple particle system</a>
                 </li>
                 <li>
