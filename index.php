@@ -37,6 +37,9 @@
                     <a target="frame" href="lab/javascript/balls/index.html">» Balls within radius</a>
                 </li>
                 <li>
+                    <a target="frame" href="lab/javascript/3dcube/index.html">» Particle cube</a>
+                </li>
+                <li>
                     <a target="frame" href="lab/javascript/loadingBalls/index.html">» Loading balls</a>
                 </li>
                 <li>
