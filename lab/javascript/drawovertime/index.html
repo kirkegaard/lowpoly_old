@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css" media="screen">
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #E4E3DD;
+      }
+    </style>
+  </head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+
+  var FPS = 30
+    , CANVAS = document.getElementById('canvas')
+    , CONTEXT = CANVAS.getContext('2d')
+    , CANVAS_WIDTH = 500
+    , CANVAS_HEIGHT = 225
+    , NOW = new Date()
+    , COLOR = ['#EE9495', '#EFCC92', '#A5DDA5', '#71CEE7']
+    , FIGURES = []
+    , FLOOR = 200
+    , TICK = 0
+    ;
+
+  function init() {
+    CANVAS.width = CANVAS_WIDTH;
+    CANVAS.height = CANVAS_HEIGHT;
+
+    FIGURES.push(new Figure('Redish', COLOR[0], 375, 0.44));
+    FIGURES.push(new Figure('Yellowish', COLOR[1], 350, 0.76));
+    FIGURES.push(new Figure('Greenish', COLOR[2], 325, 1.176));
+    FIGURES.push(new Figure('Bluish', COLOR[3], 300, 4));
+
+    draw();
+
+    setInterval(function() {
+      update();
+      draw();
+    }, 1000/FPS);
+
+  }
+
+  function update() {
+    var TIME = new Date() - NOW;
+    TICK++;
+    for (var i = 0; i < FIGURES.length; i++) {
+      FIGURES[i].update(TIME, TICK);
+    };
+  }
+
+  function draw() {
+    CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    createFloor();
+
+    for (var i = 0; i < FIGURES.length; i++) {
+      FIGURES[i].draw();
+    };
+  }
+
+  function createFloor() {
+    CONTEXT.beginPath();
+    CONTEXT.strokeStyle = '#DCDCD7';
+    CONTEXT.lineWidth = 1;
+    CONTEXT.moveTo(0, FLOOR);
+    CONTEXT.lineTo(CANVAS_WIDTH, FLOOR);
+    CONTEXT.stroke();
+  }
+
+  function Figure(name, color, x, bounce) {
+    function update(TIME) {
+      if(this.y >= FLOOR) {
+        this.vy = -(this.vy);
+      } else {
+        this.vy += this.bounce;
+      }
+
+      this.y += this.vy;
+
+      for (var i = 0; i < this.trail.length; i++) {
+        var particle = this.trail[i];
+        particle.x -= this.vx;
+        if(particle.x < 0) {
+          this.trail.splice(i, 1);
+        }
+      };
+    }
+
+    function draw() {
+      CONTEXT.fillStyle = this.color;
+      CONTEXT.beginPath();
+      CONTEXT.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+      CONTEXT.fill();
+      this.trail.push({x: this.x, y: this.y});
+
+      for (var i = 0; i < this.trail.length; i++) {
+        var particle = this.trail[i];
+        if(this.trail[i-1] !== undefined) {
+          var lp = this.trail[i-1];
+          CONTEXT.beginPath();
+          CONTEXT.strokeStyle = this.color;
+          CONTEXT.lineWidth = this.r;
+          CONTEXT.moveTo(particle.x, particle.y);
+          CONTEXT.lineTo(lp.x, lp.y);
+          // CONTEXT.quadraticCurveTo(particle.x, particle.y, lp.x, lp.y);
+          CONTEXT.stroke();
+        }
+      };
+    }
+
+    return {
+      name: name,
+      color: color,
+      x: x,
+      y: FLOOR,
+      vy: 10,
+      vx: 5,
+      r: 2,
+      bounce: bounce,
+      trail: [],
+      draw: draw,
+      update: update
+    }
+  }
+
+  init();
+
+</script>
+</body>
+</html>
