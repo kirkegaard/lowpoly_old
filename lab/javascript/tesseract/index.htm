@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Tesseract</title>
+  <style>
+    html, body, canvas {
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      background-color: #222;
+    }
+  </style>
+  <script src="mouse.js"></script>
+  <script src="requestanimationframe.js"></script>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+
+var Tesseract = {
+  x: 0,
+  y: 0,
+  s: 0.12,
+  l: 1.5,
+  ctx: null,
+  verticies: [],
+  edges: [],
+
+  init: function(x,y,ctx) {
+    this.ctx = ctx;
+    this.x = x;
+    this.y = y;
+
+    var initial = [];
+    for (var i = 0; i < 16; i++) {
+      var particle = this.getParticle(i);
+
+      particle = this.rotate(particle, 0, ['x','y'], true);
+      particle = this.rotate(particle, 0, ['y','z'], true);
+      particle = this.rotate(particle, 0, ['x','w'], true);
+      particle = this.rotate(particle, 0, ['x','z'], false);
+      particle = this.rotate(particle, 0, ['y','w'], false);
+      particle = this.rotate(particle, 0, ['z','w'], false);
+
+      initial.push(particle)
+    }
+
+    var keys = ['x', 'y', 'z', 'w'];
+    for (var i = 0; i < initial.length; i++) {
+      for (var j = i+1; j < initial.length; j++) {
+        var count = 0;
+        for (var k = 0; k < 4; k++) {
+          if (initial[i][keys[k]] === initial[j][keys[k]]) count++;
+        }
+        if(count === 3) this.edges.push([i,j]);
+      }
+    }
+  },
+
+  draw: function() {
+    this.ctx.strokeStyle = this.ctx.fillStyle = 'white';
+
+    for (var i = 0; i < this.verticies; i++) {
+      var box = {
+        x: (this.verticies[i].x + Math.SQRT2 * this.verticies[i].z) * this.s,
+        y: (this.verticies[i].y + Math.SQRT2 * this.verticies[i].w) * this.s
+      }
+      this.ctx.beginPath();
+      this.ctx.arc(box.x + this.x, box.y + this.y, 0, 0, 2 * Math.PI);
+      this.ctx.fill();
+    }
+
+    this.ctx.lineWidth = this.l;
+    this.ctx.beginPath();
+
+    for (var i = 0; i < this.edges.length; i++) {
+      var box01 = {
+        x: (this.verticies[this.edges[i][0]].x + Math.SQRT2 * this.verticies[this.edges[i][0]].z) * this.s,
+        y: (this.verticies[this.edges[i][0]].y + Math.SQRT2 * this.verticies[this.edges[i][0]].w) * this.s
+      }
+      var box02 = {
+        x: (this.verticies[this.edges[i][1]].x + Math.SQRT2 * this.verticies[this.edges[i][1]].z) * this.s,
+        y: (this.verticies[this.edges[i][1]].y + Math.SQRT2 * this.verticies[this.edges[i][1]].w) * this.s
+      }
+      this.ctx.moveTo(box01.x + this.x, box01.y + this.y);
+      this.ctx.lineTo(box02.x + this.x, box02.y + this.y);
+    }
+
+    this.ctx.stroke();
+  },
+
+  update: function(time) {
+    this.verticies = [];
+
+    for (var i = 0; i < 16; i++) {
+      var particle = this.getParticle(i);
+
+      particle = this.rotate(particle, time,   ['x','y'], true);
+      particle = this.rotate(particle, time*2, ['y','z'], true);
+      particle = this.rotate(particle, time*3, ['x','w'], true);
+      particle = this.rotate(particle, 100,    ['x','z'], false);
+      particle = this.rotate(particle, 100,    ['y','w'], false);
+      particle = this.rotate(particle, 0,      ['z','w'], false);
+
+      this.verticies.push(particle);
+    }
+
+    this.draw();
+  },
+
+  getParticle: function(i) {
+    return {
+      x: (i&1)*2 - 1,
+      y: ((i>>1)&1)*2 - 1,
+      z: ((i>>2)&1)*2 - 1,
+      w: ((i>>3)&1)*2 - 1
+    };
+  },
+
+  rotate: function(particle, value, cord, counter) {
+    var l = Math.cos(value) * particle[cord[0]] + Math.sin(value) * particle[cord[1]];
+
+    if(counter) {
+      var k = -Math.sin(value) * particle[cord[0]] + Math.cos(value) * particle[cord[1]];
+    } else {
+      var k = Math.sin(value) * particle[cord[0]] + Math.cos(value) * particle[cord[1]];
+    }
+
+    particle[cord[0]] = l;
+    particle[cord[1]] = k;
+
+    return particle;
+  }
+};
+
+
+// Globals
+var canvas
+  , ctx
+  , now
+  , s = 0.12
+  ;
+
+function init() {
+  canvas = document.getElementById('canvas');
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  ctx = canvas.getContext('2d');
+
+  Tesseract.init(
+    canvas.width / 2,
+    canvas.height / 2,
+    ctx
+  );
+
+  Tesseract.s = s * canvas.height;
+
+  // document.addEventListener("mousemove", function(event) {
+  //   Tesseract.mouse = {
+  //     x: event.clientX,
+  //     y: event.clientY
+  //   }
+  // });
+  window.addEventListener("resize", function() {
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    Tesseract.x = canvas.width / 2;
+    Tesseract.y = canvas.height / 2;
+    Tesseract.s = s * canvas.height;
+  });
+}
+
+init();
+
+function update(time) {
+  ctx.clearRect(0,0,canvas.width,canvas.height)
+  // Get mouse x and y and parse it to the tesseract
+  now = time
+  Tesseract.update(time/10000);
+  requestAnimationFrame(update)
+}
+
+
+requestAnimationFrame(function init(t) {
+  lasttime = t
+  requestAnimationFrame(update)
+})
+
+  </script>
+</body>
+</html>
