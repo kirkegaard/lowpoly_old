@@ -58,7 +58,7 @@ const Header = () => {
           <LastFM username={"ranza"} limit={3} apikey={"d58933bda5ed830aee4ef6e8abbad0a9"} />
         </p>
         <p>
-          Oh and I'm also a senior software developer at <a href="https://omnigame.dk">Omnigame</a>.
+          Oh and I'm also a senior software developer at <a href="https://omnigame.com">Omnigame</a>.
         </p>
         <hr />
         <ul>
