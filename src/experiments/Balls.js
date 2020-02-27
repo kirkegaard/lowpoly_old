@@ -49,7 +49,7 @@ const Balls = (props) => {
 
   let BALLS = [];
 
-  const NUM = 200;
+  const NUM = 100;
   const radX = Math.min(size.width, size.height) / 2 - 100 * 2;
   const radY = Math.min(size.height, size.width) / 2 - 100 * 2;
 
